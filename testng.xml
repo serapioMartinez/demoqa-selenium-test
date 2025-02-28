@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="SeleniumTest" parallel="tests" thread-count="2">
+    <test name="AutomationFormTests" thread-count="1">
+        <classes>
+            <class name="com.ipte.webapp.qa.AutomationFormPageTest"></class>
+        </classes>
+    </test>
+    <test name="RegisterAndLoginTest" parallel="methods" thread-count="2">
+        <parameter name="username" value="newusername"></parameter>
+        <parameter name="password" value="Acceptable@Pass23"></parameter>
+        <classes>
+            <class name="com.ipte.webapp.qa.RegisterFormPageTest"></class>
+            <class name="com.ipte.webapp.qa.LoginFormPageTest"></class>
+        </classes>
+    </test>
+</suite>
