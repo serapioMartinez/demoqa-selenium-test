@@ -1,0 +1,242 @@
+{
+	"info": {
+		"_postman_id": "05e28a73-cb98-47ff-9178-cd3a29297226",
+		"name": "Account",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "17627364"
+	},
+	"item": [
+		{
+			"name": "CreateUserAndValidateAuthorization",
+			"item": [
+				{
+					"name": "Add user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"let json = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Validate successfull request\", () => {\r",
+									"    let response = pm.response;\r",
+									"    pm.expect(response.code).to.be.equal(201);\r",
+									"    pm.expect(response.status).to.be.ok;\r",
+									"\r",
+									"\r",
+									"    pm.environment.set(\"userID\", json.userID)\r",
+									"    pm.environment.set(\"username\", JSON.parse(pm.request.body.raw).userName)\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"{{$randomUserName}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}Account/v1/User"
+					},
+					"response": []
+				},
+				{
+					"name": "UserNotAuthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Validate successfull request\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Validate response is false\",() => {\r",
+									"    pm.expect(pm.response.text()).to.include(\"false\")\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{accountEndpoint}}Authorized"
+					},
+					"response": []
+				},
+				{
+					"name": "GenerateAuthorizedToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let json = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(json.status).to.be.equal(\"Success\")\r",
+									"\r",
+									"    pm.environment.set(\"token\", json.token);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{accountEndpoint}}GenerateToken"
+					},
+					"response": []
+				},
+				{
+					"name": "UserAuthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Validate successfull request\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Validate response is false\",() => {\r",
+									"    pm.expect(pm.response.text()).to.include(\"true\")\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{accountEndpoint}}Authorized"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by UUID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains username and userID\", () => {\r",
+									"    let json = pm.response.json();\r",
+									"    pm.expect(json.userId).to.be.equal(pm.environment.get(\"userID\"));\r",
+									"    pm.expect(json.username).to.be.equal(pm.environment.get(\"username\"))\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{accountEndpoint}}User/{{userID}}"
+					},
+					"response": []
+				},
+				{
+					"name": "TearDown-Deleteuser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"    pm.environment.set(\"userID\",0);\r",
+									"    pm.environment.set(\"username\",\"\")\r",
+									"    pm.environment.set(\"userID\",\"\")\r",
+									"    pm.environment.set(\"token\",\"\")\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{accountEndpoint}}User/{{userID}}"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

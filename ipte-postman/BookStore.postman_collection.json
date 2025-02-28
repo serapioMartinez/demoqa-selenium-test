@@ -1,0 +1,131 @@
+{
+	"info": {
+		"_postman_id": "e21e955e-df77-453d-a5c0-33a46b45adc6",
+		"name": "BookStore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "17627364"
+	},
+	"item": [
+		{
+			"name": "BookRequests",
+			"item": [
+				{
+					"name": "List posted books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let json = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains books key\",() => {\r",
+									"    pm.response.to.have.jsonBody(\"books\");\r",
+									"    pm.environment.set(\"isbn\",json.books[0].isbn)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{bookStoreEndpoint}}Books"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book by ISBN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"isbn\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"title\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"subTitle\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"author\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"publish_date\": {\r",
+									"      \"type\": \"string\",\r",
+									"      \"format\": \"date-time\"\r",
+									"    },\r",
+									"    \"publisher\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"pages\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"    \"description\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"website\": {\r",
+									"      \"type\": \"string\",\r",
+									"      \"format\": \"uri\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"isbn\",\r",
+									"    \"title\",\r",
+									"    \"subTitle\",\r",
+									"    \"author\",\r",
+									"    \"publish_date\",\r",
+									"    \"publisher\",\r",
+									"    \"pages\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.status).to.be.ok;\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Book retrieved is the corresponding\", () => {\r",
+									"    let json = pm.response.json();\r",
+									"    pm.expect(json.isbn).to.be.equal(pm.environment.get('isbn'))\r",
+									"    pm.response.to.have.jsonSchema(jsonSchema);\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bookStoreEndpoint}}Book?ISBN={{isbn}}",
+							"host": [
+								"{{bookStoreEndpoint}}Book"
+							],
+							"query": [
+								{
+									"key": "ISBN",
+									"value": "{{isbn}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
