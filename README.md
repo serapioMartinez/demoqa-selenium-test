@@ -25,10 +25,16 @@ This project contains automated tests using Selenium WebDriver.
 
 ## Running Tests
 
+Before running the test ensure to set the desired options into the data.properties file.
+- `browser`: **chrome** value to run the test into Chrome Browser; **edge** value to run the test into Microsoft Edge Browser
+- `headless`: **true** to run test in headless mode.
 To run the tests, use the following command:
 ```sh
 mvn clean test
 ```
+
+> [!IMPORTANT]  
+> Since the web page that is been tested uses Captcha on the Register Form some tests are prone to fail.
 
 ## Reports
 
