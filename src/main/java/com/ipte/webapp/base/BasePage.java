@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Properties;
 
 import org.openqa.selenium.Alert;
@@ -59,23 +60,14 @@ public class BasePage {
     }
 
 
-    public static String takeScreenShoot() throws Exception{
-        return takeScreenShoot("SC_Error_");
-    }
-
-    public static String takeScreenShoot(String methodName) throws Exception{
-        String screenshotName = methodName+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd A"))+".png";
-        String screenshotPath = "target"+File.separator+"surefire-reports"+File.separator+"screenshots"+File.separator;
+    public static String takeScreenShootAsBase64() throws Exception{
 
         File screenshoot = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
-        File temp = new File(screenshotPath);
-        if(!temp.exists()) temp.mkdirs();
+        // Read the file into a byte array
+        byte[] fileContent = Files.readAllBytes(screenshoot.toPath());
 
-        temp = new File(screenshotPath+screenshotName);
-        Files.copy(screenshoot.toPath(), temp.toPath());
-        screenshoot.renameTo(temp);
-
-        return screenshotName;
+        // Encode the byte array to Base64
+        return Base64.getEncoder().encodeToString(fileContent);
     }
 
     public static boolean waitForElementVisible(WebElement element, int millis) throws Exception{
