@@ -26,7 +26,7 @@ public class Hooks extends BasePage {
 
     @BeforeTest
     public void setUp(ITestContext testContext) throws IOException {
-        System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
+        // System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
         getDriver();
         report.attachReporter(spark);
     }
