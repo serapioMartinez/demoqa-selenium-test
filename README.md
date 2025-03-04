@@ -12,7 +12,12 @@ This project contains automated tests using Selenium WebDriver and Cucumber JVM.
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/serapioMartinez/demoqa-selenium-test.git
+    git clone --branch cucumber https://github.com/serapioMartinez/demoqa-selenium-test.git
+    ```
+    Or:
+    ```sh
+    > git clone https://github.com/serapioMartinez/demoqa-selenium-test.git
+    > git branch cucumber
     ```
 2. Navigate to the project directory:
     ```sh
