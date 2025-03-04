@@ -18,7 +18,7 @@ public class LoginFormPage extends BasePage{
         super();
     }
 
-    public void visitPagePath() throws IOException{
+    public void visitPagePath() {
         visitPage(PATH);
     }
 
@@ -27,23 +27,23 @@ public class LoginFormPage extends BasePage{
     private By loginButton = By.cssSelector("#login");
     private By errorBanner = By.cssSelector("#name"); //Invalid username or password!
 
-    public WebElement getUsernameElement() throws IOException{
+    public WebElement getUsernameElement() {
         return getDriver().findElement(username);
     }
     
-    public WebElement getPasswordElement() throws IOException{
+    public WebElement getPasswordElement() {
         return getDriver().findElement(password);
     }
 
-    public WebElement getLoginButtonElement() throws IOException{
+    public WebElement getLoginButtonElement() {
         return getDriver().findElement(loginButton);
     }
 
-    public WebElement getErrorBannerElement() throws IOException{
+    public WebElement getErrorBannerElement() {
         return getDriver().findElement(errorBanner);
     }
 
-    public WebElement waitErrorBannerToBeDisplayed() throws IOException{
+    public WebElement waitErrorBannerToBeDisplayed() {
         return new WebDriverWait(getDriver(), Duration.ofSeconds(5))
             .until(ExpectedConditions.presenceOfElementLocated(errorBanner));
         

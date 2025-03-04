@@ -9,17 +9,17 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
-import com.ipte.webapp.App;
 
 public class WebDriverInstance {
     public static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-    public static WebDriver getDriver() throws IOException {
+    public static WebDriver getDriver() {
         if (driver.get() == null) {
             try{
                 driver.set(createDriver());
-            } catch (Exception e){
+            } catch (IOException e){
                 e.printStackTrace();
+                System.exit(1);
             }
         }
         return driver.get();
@@ -64,7 +64,8 @@ public class WebDriverInstance {
     }
 
     public static void cleanUpDriver(){
-        driver.get().quit();
+        WebDriver temp = driver.get();
+        if (temp != null) temp.quit();
         driver.remove();
     }
 

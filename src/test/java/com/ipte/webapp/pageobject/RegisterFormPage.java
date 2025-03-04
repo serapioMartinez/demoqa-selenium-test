@@ -1,10 +1,8 @@
 package com.ipte.webapp.pageobject;
 
-import java.io.IOException;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 
 import com.ipte.webapp.base.BasePage;
@@ -24,6 +22,7 @@ public class RegisterFormPage extends BasePage {
     private By password = By.cssSelector("#password");
     private By passwordInvalid = By.cssSelector("#password:invalid");
     private By submit = By.cssSelector("#register");
+    private By backToLoginButton = By.cssSelector("#gotologin");
 
     private By errorBanner = By.cssSelector("#name");
 
@@ -35,85 +34,90 @@ public class RegisterFormPage extends BasePage {
         super();
     }
 
-    public void visitPagePath() throws IOException {
+    public void visitPagePath() {
         visitPage(PATH);
     }
 
-    public WebElement getFirstName() throws IOException {
+    public WebElement getFirstName() {
         return getDriver().findElement(firstName);
     }
 
-    public WebElement getLastName() throws IOException {
+    public WebElement getLastName() {
         return getDriver().findElement(lastName);
     }
 
-    public WebElement getUserName() throws IOException {
+    public WebElement getUserName() {
         return getDriver().findElement(userName);
     }
 
-    public WebElement getPassword() throws IOException {
+    public WebElement getPassword() {
         return getDriver().findElement(password);
     }
 
-    public WebElement getSubmitElement() throws IOException {
+    public WebElement getSubmitElement() {
         return getDriver().findElement(submit);
     }
 
-    public WebElement getErrorElement() throws IOException{
+    public WebElement getErrorElement() {
         return getDriver().findElement(errorBanner);
     }
 
-    public boolean isFieldRequired(By req) throws IOException{
-        try{
+    public WebElement getBackToLoginButtonElement(){
+        return getDriver().findElement(backToLoginButton);
+    }
+
+    private boolean isFieldRequired(By req) {
+        try {
             getDriver().findElement(req);
             return true;
-        }catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println(e.getMessage());
             return false;
         }
     }
 
-    public boolean isFirstNameRequired() throws IOException {
+    public boolean isFirstNameRequired() {
         return isFieldRequired(firstNameInvalid);
     }
 
-    public boolean isLastNameRequired() throws IOException {
+    public boolean isLastNameRequired() {
         return isFieldRequired(lastNameInvalid);
     }
 
-    public boolean isUsernameRequired() throws IOException {
+    public boolean isUsernameRequired() {
         return isFieldRequired(userNameInvalid);
     }
 
-    public boolean isPasswordRequired() throws IOException {
+    public boolean isPasswordRequired() {
         return isFieldRequired(passwordInvalid);
     }
 
-    public void completeCaptcha() throws IOException {
-        // try {
-            new WebDriverWait(getDriver(), Duration.ofMillis(1000))
-                    .until(ExpectedConditions
-                            .frameToBeAvailableAndSwitchToIt(capchaFrame));
+    public void completeCaptcha() {
+        new WebDriverWait(getDriver(), Duration.ofMillis(1000))
+                .until(ExpectedConditions
+                        .frameToBeAvailableAndSwitchToIt(capchaFrame));
 
-            WebElement captchaElement = new WebDriverWait(getDriver(), Duration.ofMillis(1000))
-                    .until(ExpectedConditions
-                            .elementToBeClickable(captcha));
-            Actions actions = new Actions(getDriver());
-            actions.moveToLocation(captchaElement.getLocation().getX() + 10, captchaElement.getLocation().getY() - 10);
-            actions.moveToLocation(captchaElement.getLocation().getX() + 5, captchaElement.getLocation().getY() - 10);
-            actions.moveToElement(captchaElement);
-            // Thread.sleep(1000);
-            captchaElement.click();
-            // Thread.sleep(1000);
-            getDriver().switchTo().defaultContent();
-        // } catch (InterruptedException e) {
-        // }
+        WebElement captchaElement = new WebDriverWait(getDriver(), Duration.ofMillis(1000))
+                .until(ExpectedConditions
+                        .elementToBeClickable(captcha));
+        Actions actions = new Actions(getDriver());
+        actions.moveToLocation(captchaElement.getLocation().getX() + 10, captchaElement.getLocation().getY() - 10);
+        actions.moveToLocation(captchaElement.getLocation().getX() + 5, captchaElement.getLocation().getY() - 10);
+        actions.moveToElement(captchaElement);
+        captchaElement.click();
+        boolean captchaSolved = new WebDriverWait(getDriver(), Duration.ofMillis(1500))
+                .until(ExpectedConditions.attributeToBe(captchaElement, "aria-checked", "true"));
+
+        getDriver().switchTo().defaultContent();
+        if (!captchaSolved) {
+            throw new RuntimeException("Captcha couldn't be completed by the test");
+        }
 
     }
 
-    public WebElement waitErrorBannerToBeDisplayed() throws IOException{
+    public WebElement waitErrorBannerToBeDisplayed() {
         return new WebDriverWait(getDriver(), Duration.ofSeconds(5))
-            .until(ExpectedConditions.presenceOfElementLocated(errorBanner));
-        
+                .until(ExpectedConditions.presenceOfElementLocated(errorBanner));
+
     }
 }

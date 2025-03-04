@@ -3,11 +3,9 @@ package com.ipte.webapp.base;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
 import java.util.Properties;
 
 import org.openqa.selenium.Alert;
@@ -21,7 +19,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.ipte.webapp.App;
 
 public class BasePage {
     protected String url;
@@ -30,12 +27,12 @@ public class BasePage {
     private By closePopUp = By.cssSelector("#dismiss-button");
     private By googleAD = By.id("adplus-anchor");
 
-    public BasePage(){
+    public BasePage() {
         this.props = new Properties();
 
         try {
-            props.load(App.class.getResourceAsStream("/data.properties"));
-        }catch(Exception e){
+            props.load(this.getClass().getResourceAsStream("/data.properties"));
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             System.exit(1);
         }
@@ -43,50 +40,51 @@ public class BasePage {
         this.url = props.getProperty("url", "");
     }
 
-    public static WebDriver getDriver() throws IOException{
+    public static WebDriver getDriver() {
         return WebDriverInstance.getDriver();
     }
 
-    public String getURL(){
+    public String getURL() {
         return this.props.getProperty("url");
     }
 
-    public void visitRoot() throws IOException{
+    public void visitRoot() {
         getDriver().get(url);
     }
 
-    protected void visitPage(String path) throws IOException{
-        getDriver().get(url+path);
+    protected void visitPage(String path) {
+        getDriver().get(url + path);
     }
 
-
-    public static String takeScreenShootAsBase64() throws Exception{
-
-        File screenshoot = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
-        // Read the file into a byte array
-        byte[] fileContent = Files.readAllBytes(screenshoot.toPath());
-
-        // Encode the byte array to Base64
-        return Base64.getEncoder().encodeToString(fileContent);
+    public static String takeScreenShootAsBase64() {
+        return ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BASE64);
+    }
+    
+    public static byte[] takeScreenShootAsBytes() {
+        return ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BYTES);
+    }
+    
+    public static File takeScreenShootAsFile() {
+        return ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
     }
 
-    public static boolean waitForElementVisible(WebElement element, int millis) throws Exception{
+    public static boolean waitForElementVisible(WebElement element, int millis) {
         WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofMillis(millis));
         wait.until(ExpectedConditions.visibilityOf(element));
         return true;
     }
 
-    public void closePopUpElement() throws IOException{
+    public void closePopUpElement() {
         try {
             waitForElementVisible(
-                getDriver().findElement(closePopUp),
-                 1000);
+                    getDriver().findElement(closePopUp),
+                    1000);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void closeGoogleAdElement() throws IOException{
+    public void closeGoogleAdElement() {
         try {
             waitForElementVisible(getDriver().findElement(googleAD), 5);
             JavascriptExecutor js = (JavascriptExecutor) getDriver();
@@ -96,15 +94,25 @@ public class BasePage {
         }
     }
 
-    public void scrollToPoint(Point point) throws IOException{
+    public void scrollToPoint(Point point) {
         JavascriptExecutor js = (JavascriptExecutor) getDriver();
         js.executeScript("window.scrollTo(arguments[0],arguments[1])", point.x, point.y);
     }
 
-    public boolean waitForAlertToBeDisplayed(Duration duration) throws IOException{
-        new WebDriverWait(getDriver(), duration)
-                            .until(ExpectedConditions.alertIsPresent());
-        return true;
+    public Alert waitForAlertToBeDisplayed(Duration duration) {
+        return new WebDriverWait(getDriver(), duration)
+                .until(ExpectedConditions.alertIsPresent());
     }
 
+    public void acceptAlert(){
+        getDriver().switchTo().alert().accept();
+    }
+
+    public WebElement findElement(By locator){
+        return getDriver().findElement(locator);
+    }
+
+    public List<WebElement> findElements(By locator){
+        return getDriver().findElements(locator);
+    }
 }

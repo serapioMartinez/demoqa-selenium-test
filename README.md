@@ -1,10 +1,10 @@
-# Selenium Test Project
+# Cucumber/Selenium Test Project
 
-This project contains automated tests using Selenium WebDriver.
+This project contains automated tests using Selenium WebDriver and Cucumber JVM.
 
 ## Prerequisites
 
-- Java Development Kit (JDK) 8 or higher
+- Java Development Kit (JDK) 11
 - Maven
 - WebDriver for the browser you are testing (e.g., ChromeDriver for Chrome)
 
@@ -12,11 +12,11 @@ This project contains automated tests using Selenium WebDriver.
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/selenium-test.git
+    git clone https://github.com/serapioMartinez/demoqa-selenium-test.git
     ```
 2. Navigate to the project directory:
     ```sh
-    cd selenium-test
+    cd demoqa-selenium-test
     ```
 3. Install the dependencies:
     ```sh
@@ -39,9 +39,7 @@ mvn clean test
 ## Reports
 
 This project generates various reports. You can see each report using the file path and paste it into your browser.
-- `target\TestReportSpark.html`: This is a report generated using ExtentReport Library. It log the PASSED, FAILED and SKIPPED test in a step procedurable way.
-- `target\surefire-reports\index.html`: This is a report generated using surefire/testng plugin. Here are logged all test status aloong with more technical information. This report has a user friendly interface.
-- `target\surefire-reports\emailable-report.html`: This report is a emailable version of the previous report.
+- `target/reports/myreport.html`: This is the default report generated using *pretty* cucumber plugin. You may find the executed test ordered by feature file and then by scenario. An screen capture of the final result is attached to every scenario
 
 ## Project Structure
 
